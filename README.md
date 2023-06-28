@@ -1,6 +1,6 @@
 # What this project does
 
-thid the ui for [node-api](https://github.com/edcheyj/node-api.git) and interactivve with it give the user the abilty to add delete and view his or her notes.
+this the UI for [node-api](https://github.com/edcheyj/node-api.git) and interacts with the api giving the user the abilty to add delete and view his or her notes.
 
 # How to run locally (Assumptiion the api is being served at http://localhost:8080)
 

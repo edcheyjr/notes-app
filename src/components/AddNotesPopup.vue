@@ -76,6 +76,9 @@ const mutation = useMutation(postANote, {
 //handle submission of notes
 const handleSumbitNote = () => {
   mutation.mutate(noteInfo.value)
+  // clear info
+  noteInfo.value.title = ''
+  noteInfo.value.content = ''
 }
 
 // if (mutation.data.value?.error) {
