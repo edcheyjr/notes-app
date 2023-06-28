@@ -1,0 +1,43 @@
+<script lang="ts" setup>
+import { ref } from 'vue'
+
+import Notes from './components/Notes.vue'
+import AddNoteBtn from './components/AddNoteBtn.vue'
+import Popup from './components/AddNotesPopup.vue'
+
+interface AnyObject {
+  [key: string]: any
+}
+interface Triggers extends AnyObject {
+  buttonTrigger: boolean
+  timedTrigger: boolean
+}
+
+const popupTriggers = ref<Triggers>({
+  buttonTrigger: false,
+  timedTrigger: false,
+})
+
+const togglePopup = (trigger: string) => {
+  popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+}
+</script>
+
+<template>
+  <div class="container mx-auto h-screen max-w-3xl relative py-6">
+    <header class="w-full">
+      <h1 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">My Notes</h1>
+      <div class="w-full flex justify-between">
+        <Search />
+        <AddNoteBtn :toggle="togglePopup" />
+      </div>
+    </header>
+    <section
+      class="w-full h-[90%] mt-6 overflow-y-scroll scrollbar-thin scrollbar-track-violet-500/20 scrollbar-thumb-inherit scrollbar-corner-thumb-purple-500/20 scrollbar-rounded-md"
+    >
+      <Notes />
+    </section>
+    <footer class="w-full absolute bottom-1">&copy; mynotes.2023</footer>
+  </div>
+  <Popup v-if="popupTriggers.buttonTrigger" :toggle="togglePopup" />
+</template>
