@@ -1,3 +1,35 @@
+# What this project does
+
+thid the ui for [node-api](https://github.com/edcheyj/node-api.git) and interactivve with it give the user the abilty to add delete and view his or her notes.
+
+# How to run locally
+
+ensure you have [nodejs](https://nodejs.org/en) and [npm](https://www.npmjs.com/) installed in your machine also ensuer you have the [serve](https://github.com/edcheyj/node-api.git) part running in you machine
+
+- the clone this repository into your machine like this:
+
+```
+git clone https://github.com/edchejr/notes-app.git
+
+```
+
+- go to that directory i.e:
+
+```
+cd notes-app
+
+```
+
+- then run the following commands
+
+```
+npm install
+npm run dev
+
+```
+
+the application will be opened in the following url: **`https:localhost:5173`**
+
 # Vue 3 + TypeScript + Vite
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
