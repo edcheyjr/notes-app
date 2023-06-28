@@ -33,7 +33,7 @@ const togglePopup = (trigger: string) => {
       </div>
     </header>
     <section
-      class="w-full h-[90%] mt-6 overflow-y-scroll scrollbar-thin scrollbar-track-violet-500/20 scrollbar-thumb-inherit scrollbar-corner-thumb-purple-500/20 scrollbar-rounded-md"
+      class="w-full h-[90%] mt-6 overflow-y-scroll scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 scrollbar-track-rounded-full lg:scroll-smooth"
     >
       <Notes />
     </section>
