@@ -79,6 +79,11 @@ const handleSumbitNote = () => {
   // clear info
   noteInfo.value.title = ''
   noteInfo.value.content = ''
+
+  //the after few 2 sec go back
+  const id = setTimeout(() => {
+    props.toggle('buttonTrigger')
+  }, 2000)
 }
 
 // if (mutation.data.value?.error) {
