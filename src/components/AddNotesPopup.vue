@@ -29,7 +29,7 @@ interface ErrorData {
 }
 
 interface Props {
-  toggle: (trigger: string) => void
+  toggle: (trigger: 'buttonTrigger' | 'timedTrigger', state?: boolean) => void
 }
 
 const queryClient = useQueryClient()
@@ -72,7 +72,6 @@ const mutation = useMutation(postANote, {
     //on settled do something
   },
 })
-
 //handle submission of notes
 const handleSumbitNote = () => {
   mutation.mutate(noteInfo.value)
@@ -81,9 +80,13 @@ const handleSumbitNote = () => {
   noteInfo.value.content = ''
 
   //the after few 2 sec go back
-  const id = setTimeout(() => {
-    props.toggle('buttonTrigger')
-  }, 2000)
+  // setTimeout(() => {
+  //   setInterval(() => {
+  //     queryClient.invalidateQueries({ queryKey: ['notes'] })
+  //     console.log('revalidated the date')
+  //   }, 2000)
+  //   props.toggle('timedTrigger', false)
+  // }, 10000)
 }
 
 // if (mutation.data.value?.error) {
@@ -113,11 +116,7 @@ const handleSumbitNote = () => {
       <div class="my-2">
         <!-- success messages -->
         <div
-          v-if="
-            mutation.isSuccess.value &&
-            !mutation.isLoading.value &&
-            mutation.data.value?.success
-          "
+          v-if="mutation.isSuccess && mutation.data.value?.success"
           v-html="renderSuccessMessageUI(mutation.data.value?.message)"
         ></div>
         <!-- success error messages-->

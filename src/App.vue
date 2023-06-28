@@ -18,8 +18,13 @@ const popupTriggers = ref<Triggers>({
   timedTrigger: false,
 })
 
-const togglePopup = (trigger: string) => {
-  popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+const togglePopup = (trigger: string, state?: boolean) => {
+  if (state) {
+    popupTriggers.value[trigger] = state
+  }
+  if (trigger == 'buttonTrigger') {
+    popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+  }
 }
 </script>
 
