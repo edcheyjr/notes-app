@@ -2,19 +2,35 @@
 import Note from './Note.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { getAllNotes } from '../api/notes'
-import { isProxy, toRaw } from 'vue'
+import { isProxy, toRaw, ref } from 'vue'
+import { Note as NoteType } from '../type'
 
-interface Note {
-  id: number
-  title: string
-  content: string
-  created_at: string
-  updated_at: string
+interface Props {
+  query: string
 }
-const { isError, isFetched, isLoading, data, status, error } = useQuery(
-  ['notes'],
-  getAllNotes
-)
+
+const { query } = defineProps<Props>()
+const { isError, isFetched, isLoading, data, error } = useQuery({
+  queryKey: ['notes'],
+  queryFn: getAllNotes,
+  networkMode: 'offlineFirst',
+  staleTime: 8000,
+})
+
+console.log('query', query)
+
+let dataShow: NoteType[] = []
+
+// if (data.value) {
+//   const dataSorted = reactive(data).value.reverse() //rearrange latest first
+//   if (query == '') {
+//     dataShow.push(
+//       ...dataSorted.filter((note: NoteType) => note.title.startsWith(query))
+//     )
+//   } else {
+//     dataShow.push(...dataSorted)
+//   }
+// }
 </script>
 
 <template>

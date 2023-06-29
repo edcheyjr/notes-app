@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { formatDate } from '../utils/formatDate'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import Trash from '../assets/trash.svg'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { Mutation, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { deleteANote } from '../api/notes'
 import { Note, SuccessData } from '../type'
 import {
@@ -23,8 +23,18 @@ const successData = ref<SuccessData>({
   success: false,
   message: '',
 })
+const isShowMessage = ref<boolean>(true)
 
-const mutation = useMutation(deleteANote, {
+computed({
+  get: () => !isShowMessage.value,
+  set: (val) => {
+    console.log('val', val)
+    setTimeout(() => val, 2000)
+  },
+})
+
+const mutation = useMutation({
+  mutationFn: deleteANote,
   onMutate: () => {
     // can do optimistic update here
   },
@@ -44,6 +54,8 @@ const mutation = useMutation(deleteANote, {
   onSettled: () => {
     //on settled do something
   },
+  networkMode: 'offlineFirst',
+  staleTime: 8000,
 })
 
 // delete this user
@@ -56,7 +68,7 @@ function handleDeleteUser() {
   <div class="">
     <div
       v-if="mutation.isError.value && !mutation.isSuccess.value"
-      v-html="renderErrorMessageUI(mutation.error)"
+      v-html="renderErrorMessageUI(mutation.error, 2000)"
     ></div>
     <div
       v-else-if="
@@ -64,7 +76,9 @@ function handleDeleteUser() {
         !mutation.isLoading.value &&
         mutation.data.value?.success
       "
-      v-html="renderSuccessMessageUI(mutation.data.value?.message)"
+      v-html="
+        renderSuccessMessageUI(mutation.data.value?.message, isShowMessage)
+      "
     ></div>
   </div>
   <article
@@ -72,7 +86,9 @@ function handleDeleteUser() {
     :style="`border-color:${currentColor}`"
   >
     <h3 class="text-lg 2xl:text-xl italic font-light">{{ note.title }}</h3>
-    <p class="text-sm 2xl:text-base">{{ note.content }}</p>
+    <p class="text-sm 2xl:text-base text-ellipsis w-[90%]">
+      {{ note.content }}
+    </p>
     <div
       class="absolute top-3 right-3 text-sm 2xl:text-base font-normal"
       :style="`color:${currentColor}`"

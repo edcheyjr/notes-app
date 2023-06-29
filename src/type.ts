@@ -1,3 +1,7 @@
+interface AnyObject {
+  [key: string]: any
+}
+
 export interface Note {
   id: number
   content: string
@@ -21,4 +25,28 @@ export interface Note {
 export interface PostANote {
   title: string
   content: string
+}
+
+export interface Triggers extends AnyObject {
+  buttonTrigger: boolean
+  timedTrigger: boolean
+}
+
+export interface DataError extends Error {
+  title: string[]
+  content: string[]
+}
+// {
+//     "error": {
+//         "title": [
+//             "The title field is required."
+//         ],
+//         "content": [
+//             "The content field is required."
+//         ]
+//     }
+// }
+
+export interface FetchTimoutOptions extends RequestInit {
+  timeout: number
 }

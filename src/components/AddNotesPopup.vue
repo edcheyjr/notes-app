@@ -2,31 +2,11 @@
 import { ref } from 'vue'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import { useQueryClient, useMutation } from '@tanstack/vue-query'
-import { PostANote } from '../type'
+import { DataError, PostANote } from '../type'
 import { postANote } from '../api/notes'
-import { SuccessData } from '../type'
-import {
-  renderErrorMessageUI,
-  renderSuccessMessageUI,
-} from '../utils/messageHandlers'
+import { renderErrorMessageUI } from '../utils/messageHandlers'
 
 // errror messge type
-// {
-//     "error": {
-//         "title": [
-//             "The title field is required."
-//         ],
-//         "content": [
-//             "The content field is required."
-//         ]
-//     }
-// }
-interface ErrorData {
-  error: {
-    title: string[]
-    content: string[]
-  }
-}
 
 interface Props {
   toggle: (trigger: 'buttonTrigger' | 'timedTrigger', state?: boolean) => void
@@ -42,17 +22,8 @@ const noteInfo = ref<PostANote>({
   content: '',
 })
 
-const successData = ref<SuccessData>()
-const errorData = ref<ErrorData>()
-
-const handleInputTitle = (e: Event) => {
-  noteInfo.value.title = e.target.value
-}
-const handleNotes = (e: Event) => {
-  noteInfo.value.content = e.target.value
-}
-
-const mutation = useMutation(postANote, {
+const mutation = useMutation({
+  mutationFn: postANote,
   onMutate: () => {
     // can do optimistic update here
   },
@@ -62,7 +33,7 @@ const mutation = useMutation(postANote, {
       console.log('data', data, variable, context)
     queryClient.invalidateQueries({ queryKey: ['notes'] })
   },
-  onError: (error: ErrorData, variable, context) => {
+  onError: (error: DataError, variable, context) => {
     //if optimistic update is done you can roll back here
     console.log('error', error, 'variable:', variable, 'context', context)
     // Invalidate and refetch
@@ -71,15 +42,43 @@ const mutation = useMutation(postANote, {
   onSettled: () => {
     //on settled do something
   },
+  networkMode: 'offlineFirst',
+  staleTime: 8000,
 })
+console.log(mutation.data.value)
 //handle submission of notes
-const handleSumbitNote = () => {
-  mutation.mutate(noteInfo.value)
-  // clear info
-  noteInfo.value.title = ''
-  noteInfo.value.content = ''
 
-  //the after few 2 sec go back
+const handleSumbitNote = (e: Event) => {
+  e.preventDefault()
+  // if (!noteInfo.value.title || !noteInfo.value.content) {
+  //   return renderErrorMessageUI('Please enter a title and content', true)
+  // }
+  // if (noteInfo.value.title.length < 3) {
+  //   return renderErrorMessageUI(
+  //     'Title must be at least 3 characters long',
+  //     true
+  //   )
+  // }
+  // if (noteInfo.value.content.length < 3) {
+  //   return renderErrorMessageUI(
+  //     'Content must be at least 3 characters long',
+  //     true
+  //   )
+  // }
+  // if (noteInfo.value.title.length > 100) {
+  //   return renderErrorMessageUI(
+  //     'Title must be less than 100 characters long',
+  //     true
+  //   )
+  // }
+  mutation.mutate(noteInfo.value)
+  // clear inputs from  addNoteForm
+  noteInfo.value = {
+    title: '',
+    content: '',
+  }
+
+  //FIXME: the after few 2 sec go back
   // setTimeout(() => {
   //   setInterval(() => {
   //     queryClient.invalidateQueries({ queryKey: ['notes'] })
@@ -113,83 +112,94 @@ const handleSumbitNote = () => {
   >
     <div class="bg-zinc-800 p-8 relative rounded-md shadow-lg space-y-4 w-2/5">
       <h2 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">New Note</h2>
-      <div class="my-2">
-        <!-- success messages -->
+      <form ref="addNotesForm" @submit.prevent="handleSumbitNote">
         <div
+          class="my-2"
           v-if="mutation.isSuccess && mutation.data.value?.success"
+        >
+          <div
+            class="py-1.5 text-sm font-bold text-green-400 bg-green-300/10 rounded-md px-2"
+            role="alert"
+          >
+            {{ mutation.data.value?.message }}
+          </div>
+          <!-- TOFIX: success messages -->
+          <!-- <div
           v-html="renderSuccessMessageUI(mutation.data.value?.message)"
-        ></div>
-        <!-- success error messages-->
-      </div>
-      <div class="space-y-2">
-        <label for="title" class="font-bold italic" :style="`color:${color}`"
-          >title</label
-        >
-        <input
-          type="text"
-          class="bg-white/10 font-normal text-base rounded-sm px-2 placeholder-gray-400 w-full py-2 mt-2"
-          id="title"
-          v-model="noteInfo.title"
-          @input="handleInputTitle"
-          name="title"
-          placeholder="Title"
-        />
-        <!-- error part -->
-        <div
-          v-for="message in mutation.data.value?.error.title"
-          class="space-y-2"
-        >
-          <div
-            v-if="mutation.data.value?.error"
-            v-html="renderErrorMessageUI(message)"
-          ></div>
+        ></div> -->
+          <!-- success error messages-->
         </div>
-      </div>
-      <div class="space-y-2">
-        <label for="content" class="font-bold italic" :style="`color:${color}`"
-          >note</label
-        >
-        <textarea
-          cols="12"
-          rows="6"
-          id="content"
-          v-model="noteInfo.content"
-          @input="handleNotes"
-          placeholder="your notes"
-          name="content"
-          class="w-full font-normal text-base placeholder-gray-400 px-2 h-fit bg-white/10 rounded-sm py-2"
-        >
-        </textarea>
-        <!-- error part -->
-        <div
-          v-for="message in mutation.data.value?.error.content"
-          class="space-y-2"
-        >
+        <div class="space-y-2">
+          <label for="title" class="font-bold italic" :style="`color:${color}`"
+            >title</label
+          >
+          <input
+            type="text"
+            class="bg-white/10 font-normal text-base rounded-sm px-2 placeholder-gray-400 w-full py-2 mt-2"
+            id="title"
+            v-model="noteInfo.title"
+            name="title"
+            placeholder="Title"
+          />
+          <!-- error part -->
           <div
-            v-if="mutation.data.value?.error"
-            v-html="renderErrorMessageUI(message)"
-          ></div>
+            v-for="message in mutation.data.value?.error.title"
+            class="space-y-2"
+          >
+            <div
+              v-if="mutation.data.value?.error"
+              v-html="renderErrorMessageUI(message, true)"
+            ></div>
+          </div>
         </div>
-      </div>
-      <div class="flex flex-row space-x-2">
-        <button
-          @click="
-            () => {
-              props.toggle('buttonTrigger')
-            }
-          "
-          class="bg-white/20 shadow-md hover:bg-red-300/30 px-4 py-3 text-sm capitalize font-bold rounded-sm transition duration-200 ease-in-out hover:shadow-none"
-        >
-          close
-        </button>
-        <button
-          @click="handleSumbitNote"
-          class="px-4 py-3 text-sm shadow-md capitalize font-bold rounded-sm transition duration-200 ease-in-out hover:shadow-none hover:opacity-90"
-          :style="`background-color: ${color}`"
-        >
-          add +
-        </button>
-      </div>
+        <div class="space-y-2">
+          <label
+            for="content"
+            class="font-bold italic"
+            :style="`color:${color}`"
+            >note</label
+          >
+          <textarea
+            cols="12"
+            rows="6"
+            id="content"
+            v-model="noteInfo.content"
+            placeholder="your notes"
+            name="content"
+            class="w-full font-normal text-base placeholder-gray-400 px-2 h-fit bg-white/10 rounded-sm py-2"
+          >
+          </textarea>
+          <!-- error part -->
+          <div
+            v-for="message in mutation.data.value?.error.content"
+            class="space-y-2"
+          >
+            <div
+              v-if="mutation.data.value?.error"
+              v-html="renderErrorMessageUI(message, true)"
+            ></div>
+          </div>
+        </div>
+        <div class="flex flex-row space-x-2">
+          <button
+            @click="
+              () => {
+                props.toggle('buttonTrigger')
+              }
+            "
+            class="bg-white/20 shadow-md hover:bg-red-300/30 px-4 py-3 text-sm capitalize font-bold rounded-sm transition duration-200 ease-in-out hover:shadow-none"
+          >
+            close
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-3 text-sm shadow-md capitalize font-bold rounded-sm transition duration-200 ease-in-out hover:shadow-none hover:opacity-90"
+            :style="`background-color: ${color}`"
+          >
+            add +
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
