@@ -2,7 +2,7 @@
 
 this the UI for [node-api](https://github.com/edcheyj/node-api.git) and interacts with the api giving the user the abilty to add delete and view his or her notes.
 
-# How to run locally (Assumptiion the api is being served at http://localhost:8080)
+# How to run locally (Assumption the api is being served at http://localhost:8080)
 
 ensure you have [nodejs](https://nodejs.org/en) and [npm](https://www.npmjs.com/) installed in your machine also ensuer you have the [serve](https://github.com/edcheyj/node-api.git) part running in you machine
 
