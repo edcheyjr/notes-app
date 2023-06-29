@@ -5,8 +5,7 @@ interface Props {
   query: string
 }
 
-const props = defineProps<Props>()
-console.log('props', props)
+const { query } = defineProps<Props>()
 </script>
 
 <template>
@@ -17,6 +16,7 @@ console.log('props', props)
       type="text"
       class="bg-white/10 font-normal text-base rounded-sm px-2 placeholder-gray-400 w-full py-2 mt-2"
       placeholder="Search..."
+      v-model="query"
     />
     <img
       :src="Search"
