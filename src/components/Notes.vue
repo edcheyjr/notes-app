@@ -7,7 +7,7 @@ import { Note as NoteType, SuccessData, MessageType } from '../type'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import messageHandler from '../utils/messageHandlers'
 import Illustration from './NoNotes.vue'
-import useDebouncedRef from '../hooks/debounce'
+import useRevertDebounceRef from '../hooks/revertDebounce'
 
 interface Props {
   query: string
@@ -22,7 +22,7 @@ const successData = reactive(
   })
 )
 const errorData = reactive(ref(''))
-const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
+const isShowMessage = reactive(useRevertDebounceRef<boolean>(false, 2000))
 
 const { isError, isFetched, isLoading, data, error } = useQuery(['notes'], {
   queryFn: getAllNotes,
@@ -75,7 +75,6 @@ const copy = shallowReadonly(filtered)
             :note="isProxy(note) ? toRaw(note) : note"
             v-bind="note"
             :key="note.id"
-            :isShowMessage="isShowMessage"
             @success="successData = $event"
             @error="errorData = $event"
             @showMessage="isShowMessage = $event"

@@ -18,7 +18,7 @@ interface Props {
   note: Note
   isShowMessage: boolean
 }
-const { note, isShowMessage } = defineProps<Props>()
+const { note } = defineProps<Props>()
 const currentColor = ref(randomColorsGenerator())
 const queryClient = useQueryClient()
 
@@ -33,6 +33,7 @@ const mutation = useMutation({
       success: true,
       message: 'Note deleted successfully',
     })
+    emit('showMessage', true)
   },
   onSuccess: (data: SuccessData, variable, context) => {
     emit('success', {
@@ -60,7 +61,6 @@ function handleDeleteUser(e: Event) {
   e.stopPropagation()
   mutation.mutate({ id: note.id })
   console.log('id', note.id)
-  emit('showMessage', !isShowMessage)
 }
 </script>
 
