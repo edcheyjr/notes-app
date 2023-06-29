@@ -13,6 +13,13 @@ git clone https://github.com/edchejr/notes-app.git
 
 ```
 
+- then do git pull check of any changes
+
+```
+git pull origin master
+
+```
+
 - go to that directory i.e:
 
 ```
