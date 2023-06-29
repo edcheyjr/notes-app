@@ -53,14 +53,13 @@ const mutation = useMutation({
 
 // delete this user
 function handleDeleteUser(e: Event) {
-  e.preventDefault()
   e.stopPropagation()
   mutation.mutate({ id: note.id })
+  console.log('id', note.id)
 }
 </script>
 
 <template>
-  <span>{{ isShowMessage }}</span>
   <div class="">
     <div
       v-if="mutation.isError.value && !mutation.isSuccess.value"
