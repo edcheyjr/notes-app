@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import { useQueryClient, useMutation } from '@tanstack/vue-query'
 import { DataError, MessageType, PostANote } from '../type'
 import { postANote } from '../api/notes'
 import messageHandler from '../utils/messageHandlers'
-import useDebouncedRef from '../hooks/debounce'
+// import useDebouncedRef from '../hooks/debounce'
 
 // errror messge type
 
@@ -17,7 +17,7 @@ const queryClient = useQueryClient()
 
 const color = ref(randomColorsGenerator())
 const props = defineProps<Props>()
-const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
+// const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
 
 const noteInfo = ref<PostANote>({
   title: '',
@@ -58,7 +58,7 @@ const handleSumbitNote = (e: Event) => {
     title: '',
     content: '',
   }
-  isShowMessage.value = false
+  // isShowMessage.value = false
 
   //FIXME: the after few 2 sec go back
   // setTimeout(() => {
@@ -92,7 +92,7 @@ const handleSumbitNote = (e: Event) => {
               messageHandler(
                 mutation.data.value?.message,
                 MessageType.SUCCESS,
-                isShowMessage
+                true
               )
             "
           ></div>
@@ -116,7 +116,7 @@ const handleSumbitNote = (e: Event) => {
             class="space-y-2"
           >
             <div
-              v-html="messageHandler(message, MessageType.ERROR, isShowMessage)"
+              v-html="messageHandler(message, MessageType.ERROR, true)"
             ></div>
           </div>
         </div>
@@ -144,7 +144,7 @@ const handleSumbitNote = (e: Event) => {
             class="space-y-2"
           >
             <div
-              v-html="messageHandler(message, MessageType.ERROR, isShowMessage)"
+              v-html="messageHandler(message, MessageType.ERROR, true)"
             ></div>
           </div>
         </div>

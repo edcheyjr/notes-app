@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { formatDate } from '../utils/formatDate'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import Trash from '../assets/trash.svg'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { deleteANote } from '../api/notes'
-import { MessageType, Note, SuccessData } from '../type'
-import messageHandler from '../utils/messageHandlers'
-import useDebouncedRef from '../hooks/debounce'
+import { Note, SuccessData } from '../type'
+
+// defines what events our component emits
+const emit = defineEmits<{
+  (event: 'success', success: SuccessData): SuccessData | undefined
+  (event: 'error', error: unknown): string | undefined
+  (event: 'showMessage', isShowMessage: boolean): boolean
+}>()
 
 interface Props {
   note: Note
+  isShowMessage: boolean
 }
-const { note } = defineProps<Props>()
+const { note, isShowMessage } = defineProps<Props>()
 const currentColor = ref(randomColorsGenerator())
 const queryClient = useQueryClient()
-
-const successData = ref<SuccessData>({
-  success: false,
-  message: '',
-})
-const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
 
 const mutation = useMutation({
   mutationFn: deleteANote,
@@ -29,18 +29,22 @@ const mutation = useMutation({
   mutationKey: ['notes', note.id],
   onMutate: () => {
     // can do optimistic update here
-    successData.value.success = true
-    successData.value.message = 'Note deleted successfully'
-    isShowMessage.value = false
+    emit('success', {
+      success: true,
+      message: 'Note deleted successfully',
+    })
   },
   onSuccess: (data: SuccessData, variable, context) => {
-    successData.value.success = data.success
-    successData.value.message = data.message
+    emit('success', {
+      success: data.success,
+      message: data.message,
+    })
     // Invalidate and refetch
     console.log('data', data, variable, context)
     queryClient.invalidateQueries({ queryKey: ['notes'] })
   },
   onError: (error, variable, context) => {
+    emit('error', error)
     //if optimistic update is done you can roll back here
     console.log('error', error, 'variable:', variable, 'context', context)
     // Invalidate and refetch
@@ -56,32 +60,11 @@ function handleDeleteUser(e: Event) {
   e.stopPropagation()
   mutation.mutate({ id: note.id })
   console.log('id', note.id)
+  emit('showMessage', !isShowMessage)
 }
 </script>
 
 <template>
-  <div class="">
-    <div
-      v-if="mutation.isError.value && !mutation.isSuccess.value"
-      v-html="
-        messageHandler(mutation.error.value, MessageType.ERROR, isShowMessage)
-      "
-    ></div>
-    <div
-      v-else-if="
-        mutation.isSuccess.value &&
-        !mutation.isLoading.value &&
-        mutation.data.value?.success
-      "
-      v-html="
-        messageHandler(
-          mutation.data.value?.message,
-          MessageType.SUCCESS,
-          isShowMessage
-        )
-      "
-    ></div>
-  </div>
   <article
     class="w-full border-t-[5px] py-6 px-2 relative rounded flex flex-col gap-3 bg-amber-100/10"
     :style="`border-color:${currentColor}`"

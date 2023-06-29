@@ -3,10 +3,11 @@ import Note from './Note.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { getAllNotes } from '../api/notes'
 import { isProxy, reactive, toRaw, shallowReadonly, ref, computed } from 'vue'
-import { Note as NoteType } from '../type'
+import { Note as NoteType, SuccessData, MessageType } from '../type'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
-
+import messageHandler from '../utils/messageHandlers'
 import Illustration from './NoNotes.vue'
+import useDebouncedRef from '../hooks/debounce'
 
 interface Props {
   query: string
@@ -14,6 +15,14 @@ interface Props {
 
 const props = defineProps<Props>()
 const color = ref(randomColorsGenerator())
+const successData = reactive(
+  ref<SuccessData>({
+    success: false,
+    message: '',
+  })
+)
+const errorData = reactive(ref(''))
+const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
 
 const { isError, isFetched, isLoading, data, error } = useQuery(['notes'], {
   queryFn: getAllNotes,
@@ -29,7 +38,6 @@ console.log('data', data.value)
 //     .filter((note: NoteType) => note.title.includes('title'))
 // )
 // const copy = shallowReadonly(filtered)
-// console.log('copy', copy)
 </script>
 
 <template>
@@ -47,9 +55,33 @@ console.log('data', data.value)
       </div>
     </div>
     <div v-else>
+      <div class="my-1" v-if="successData.success">
+        <div
+          v-html="
+            messageHandler(
+              successData.message,
+              MessageType.SUCCESS,
+              isShowMessage
+            )
+          "
+        ></div>
+        <div class="my-1" v-if="errorData">
+          <div
+            v-html="messageHandler(errorData, MessageType.ERROR, isShowMessage)"
+          ></div>
+        </div>
+      </div>
       <ul v-for="note in data">
         <li class="px-2 mt-2">
-          <Note :note="isProxy(note) ? toRaw(note) : note" />
+          <Note
+            :note="isProxy(note) ? toRaw(note) : note"
+            v-bind="note"
+            :key="note.id"
+            :isShowMessage="isShowMessage"
+            @success="successData = $event"
+            @error="errorData = $event"
+            @showMessage="isShowMessage = $event"
+          />
         </li>
       </ul>
     </div>
