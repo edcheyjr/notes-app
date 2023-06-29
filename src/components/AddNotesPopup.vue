@@ -112,7 +112,11 @@ const handleSumbitNote = (e: Event) => {
   >
     <div class="bg-zinc-800 p-8 relative rounded-md shadow-lg space-y-4 w-2/5">
       <h2 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">New Note</h2>
-      <form ref="addNotesForm" @submit.prevent="handleSumbitNote">
+      <form
+        ref="addNotesForm"
+        @submit.prevent="handleSumbitNote"
+        @keypress.enter="handleSumbitNote"
+      >
         <div
           class="my-2"
           v-if="mutation.isSuccess && mutation.data.value?.success"

@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import Search from '../assets/search-normal.svg'
 
-interface Props {
-  query: string
-}
+const SEARCH_EVENT = 'update:modelValue'
 
-const { query } = defineProps<Props>()
+defineProps({
+  modelValue: String,
+})
+
+// defines what events our component emits
+defineEmits([SEARCH_EVENT])
 </script>
 
 <template>
@@ -16,7 +19,9 @@ const { query } = defineProps<Props>()
       type="text"
       class="bg-white/10 font-normal text-base rounded-sm px-2 placeholder-gray-400 w-full py-2 mt-2"
       placeholder="Search..."
-      v-model="query"
+      :value="modelValue"
+      @input="$emit(SEARCH_EVENT, $event?.target?.value)"
+      @keypress.enter="$emit(SEARCH_EVENT, $event?.target?.value)"
     />
     <img
       :src="Search"

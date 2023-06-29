@@ -22,7 +22,6 @@ const togglePopup = (trigger: string, state?: boolean) => {
     popupTriggers.value[trigger] = !popupTriggers.value[trigger]
   }
 }
-console.log('query', query)
 </script>
 
 <template>
@@ -30,7 +29,7 @@ console.log('query', query)
     <header class="w-full mx-3">
       <h1 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">My Notes</h1>
       <div class="w-full flex flex-row justify-between relative px-3">
-        <Search :query="query" />
+        <Search v-model="query" />
         <AddNoteBtn :toggle="togglePopup" />
       </div>
     </header>
