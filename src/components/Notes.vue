@@ -53,46 +53,50 @@ const copy = shallowReadonly(filtered)
     ></div>
   </div>
   <section
-    class="w-full h-[80%] lg:h-[85%] xl:h-[89%] scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 scrollbar-track-rounded-full lg:scroll-smooth overflow-y-auto"
+    class="w-full h-[80%] lg:h-[85%] xl:h-[89%] bg-gray-50/[4%] backdrop-blur rounded-xl overflow-x-hidden flex items-center justify-center"
   >
-    <div v-if="isFetched" class="h-full w-full">
-      <div
-        v-if="data && data?.length < 1"
-        class="h-4/5 w-full items-center justify-center flex flex-col space-y-6"
-      >
-        <p class="text-3xl font-semibold" :style="`color:${color}`">
-          No notes found
-        </p>
-        <div class="w-96 h-96">
-          <Illustration :color="color" />
+    <div
+      class="w-full h-[98%] scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 lg:scroll-smooth overflow-y-auto overflow-x-hidden"
+    >
+      <div v-if="isFetched" class="h-full w-full pb-4">
+        <div
+          v-if="data && data?.length < 1"
+          class="h-4/5 w-full items-center justify-center flex flex-col space-y-6"
+        >
+          <p class="text-3xl font-semibold" :style="`color:${color}`">
+            No notes found
+          </p>
+          <div class="w-96 h-96">
+            <Illustration :color="color" />
+          </div>
+        </div>
+        <div v-else class="">
+          <ul v-for="note in copy" class="flex flex-col">
+            <li class="px-2 my-1">
+              <Note
+                :note="isProxy(note) ? toRaw(note) : note"
+                v-bind="note"
+                :key="note.id"
+                @success="successData = $event"
+                @error="errorData = $event"
+                @showMessage="isShowMessage = $event"
+              />
+            </li>
+          </ul>
         </div>
       </div>
-      <div v-else>
-        <ul v-for="note in copy">
-          <li class="px-2 mt-2">
-            <Note
-              :note="isProxy(note) ? toRaw(note) : note"
-              v-bind="note"
-              :key="note.id"
-              @success="successData = $event"
-              @error="errorData = $event"
-              @showMessage="isShowMessage = $event"
-            />
-          </li>
-        </ul>
+      <div
+        v-if="isLoading"
+        class="text-3xl text-blue-400 h-4/5 items-center justify-center flex"
+      >
+        loading ...
       </div>
-    </div>
-    <div
-      v-if="isLoading"
-      class="text-3xl text-blue-400 h-4/5 items-center justify-center flex"
-    >
-      loading ...
-    </div>
-    <div
-      v-if="isError"
-      class="text-lg text-red-500 h-4/5 items-center justify-center flex"
-    >
-      {{ error }}
+      <div
+        v-if="isError"
+        class="text-lg text-red-500 h-4/5 items-center justify-center flex"
+      >
+        {{ error }}
+      </div>
     </div>
   </section>
 </template>

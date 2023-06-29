@@ -13,7 +13,7 @@ defineEmits([SEARCH_EVENT])
 
 <template>
   <div
-    class="w-full mr-6 flex relative xl:fixed xl:right xl:w-fit top-[3%] xl:trasform xl:translate-x-[75%] xl:left-1/2"
+    class="w-full mr-6 flex relative xl:fixed xl:right xl:w-fit top-[3%] xl:left-[57.5%] 2xl:left-[56%]"
   >
     <input
       type="text"
