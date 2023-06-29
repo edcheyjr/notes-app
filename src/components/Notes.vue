@@ -53,7 +53,7 @@ const copy = shallowReadonly(filtered)
       </div>
     </div>
     <div v-else>
-      <div class="my-1" v-if="successData.success">
+      <div class="my-1 px-2" v-if="successData.success">
         <div
           v-html="
             messageHandler(
@@ -63,7 +63,7 @@ const copy = shallowReadonly(filtered)
             )
           "
         ></div>
-        <div class="my-1" v-if="errorData">
+        <div class="my-1 px-2" v-if="errorData">
           <div
             v-html="messageHandler(errorData, MessageType.ERROR, isShowMessage)"
           ></div>
