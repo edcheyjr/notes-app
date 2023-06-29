@@ -34,7 +34,7 @@ const togglePopup = (trigger: string, state?: boolean) => {
       </div>
     </header>
     <Notes :query="query" />
-    <footer class="w-full fixed bottom-3 left-5">&copy; mynotes.2023</footer>
+    <footer class="w-full fixed bottom-3 left-[3%]">&copy; mynotes.2023</footer>
   </div>
   <!-- modal -->
   <Popup v-if="popupTriggers.buttonTrigger" :toggle="togglePopup" />
