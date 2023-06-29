@@ -13,10 +13,6 @@ export async function getAllNotes(): Promise<Note[]> {
     headers,
   })
   const data = await response.json()
-  if (response.status !== 200) {
-    throw data.error
-  }
-  console.log('data', data)
   return data
 }
 

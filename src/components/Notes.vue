@@ -28,16 +28,14 @@ const { isError, isFetched, isLoading, data, error } = useQuery(['notes'], {
   queryFn: getAllNotes,
   networkMode: 'offlineFirst',
 })
-console.log('data', data.value)
 
-// const dataArr = ref<NoteType[]>(toRaw(data.value ? data.value : []))
-// const dataReactive = reactive(dataArr)
-// const filtered = computed(() =>
-//   dataReactive.value
-//     .reverse()
-//     .filter((note: NoteType) => note.title.includes('title'))
-// )
-// const copy = shallowReadonly(filtered)
+const dataReactive = reactive(data)
+const filtered = computed(() =>
+  dataReactive?.value
+    ?.reverse()
+    .filter((note: NoteType) => note.title.includes(props.query))
+)
+const copy = shallowReadonly(filtered)
 </script>
 
 <template>
@@ -71,7 +69,7 @@ console.log('data', data.value)
           ></div>
         </div>
       </div>
-      <ul v-for="note in data">
+      <ul v-for="note in copy">
         <li class="px-2 mt-2">
           <Note
             :note="isProxy(note) ? toRaw(note) : note"
