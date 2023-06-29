@@ -16,7 +16,6 @@ const emit = defineEmits<{
 
 interface Props {
   note: Note
-  isShowMessage: boolean
 }
 const { note } = defineProps<Props>()
 const currentColor = ref(randomColorsGenerator())
