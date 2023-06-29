@@ -75,7 +75,9 @@ const handleSumbitNote = (e: Event) => {
   <div
     class="fixed top-0 left-0 right-0 bottom-0 z-[99] bg-black/60 flex items-center justify-center"
   >
-    <div class="bg-zinc-800 p-8 relative rounded-md shadow-lg space-y-4 w-2/5">
+    <div
+      class="bg-zinc-800 p-8 relative rounded-md shadow-lg space-y-4 w-[90%] lg:w-2/5"
+    >
       <h2 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">New Note</h2>
       <form
         ref="addNotesForm"
