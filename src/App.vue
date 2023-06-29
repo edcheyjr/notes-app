@@ -5,17 +5,9 @@ import Notes from './components/Notes.vue'
 import AddNoteBtn from './components/AddNoteBtn.vue'
 import Popup from './components/AddNotesPopup.vue'
 import Search from './components/Search.vue'
+import { Triggers } from './type'
 
-interface AnyObject {
-  [key: string]: any
-}
-
-const query = ref<string>()
-
-interface Triggers extends AnyObject {
-  buttonTrigger: boolean
-  timedTrigger: boolean
-}
+const query = ref<string>('')
 
 const popupTriggers = ref<Triggers>({
   buttonTrigger: false,
@@ -30,6 +22,7 @@ const togglePopup = (trigger: string, state?: boolean) => {
     popupTriggers.value[trigger] = !popupTriggers.value[trigger]
   }
 }
+console.log('query', query)
 </script>
 
 <template>
@@ -37,14 +30,14 @@ const togglePopup = (trigger: string, state?: boolean) => {
     <header class="w-full mx-3">
       <h1 class="text-2xl xl:text3xl 2xl:text-4xl font-bold my-2">My Notes</h1>
       <div class="w-full flex flex-row justify-between relative px-3">
-        <Search :query="query || ''" />
+        <Search :query="query" />
         <AddNoteBtn :toggle="togglePopup" />
       </div>
     </header>
     <section
       class="w-full h-[80%] lg:h-[85%] xl:h-[89%] mt-6 overflow-y-scroll scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 scrollbar-track-rounded-full lg:scroll-smooth"
     >
-      <Notes />
+      <Notes :query="query" />
     </section>
     <footer class="w-full absolute bottom-1">&copy; mynotes.2023</footer>
   </div>
