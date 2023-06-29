@@ -34,7 +34,7 @@ const togglePopup = (trigger: string, state?: boolean) => {
       </div>
     </header>
     <section
-      class="w-full h-[80%] lg:h-[85%] xl:h-[89%] mt-6 overflow-y-scroll scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 scrollbar-track-rounded-full lg:scroll-smooth"
+      class="w-full h-[80%] lg:h-[85%] xl:h-[89%] mt-6 scrollbar-thin scrollbar-track-violet-500/20 scrollbar-corner-thumb-purple-500/20 scrollbar-thumb-rounded-md lg:scrollbar-thumb-violet-500/90 scrollbar-track-rounded-full lg:scroll-smooth overflow-y-auto"
     >
       <Notes :query="query" />
     </section>

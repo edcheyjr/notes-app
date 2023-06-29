@@ -24,6 +24,8 @@ const noteInfo = ref<PostANote>({
 
 const mutation = useMutation({
   mutationFn: postANote,
+  cacheTime: 200,
+  networkMode: 'offlineFirst',
   onMutate: () => {
     // can do optimistic update here
   },
@@ -42,10 +44,8 @@ const mutation = useMutation({
   onSettled: () => {
     //on settled do something
   },
-  networkMode: 'offlineFirst',
-  staleTime: 8000,
 })
-console.log(mutation.data.value)
+
 //handle submission of notes
 
 const handleSumbitNote = (e: Event) => {

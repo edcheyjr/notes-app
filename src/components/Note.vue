@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, Ref, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { formatDate } from '../utils/formatDate'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import Trash from '../assets/trash.svg'
@@ -27,6 +27,8 @@ const isShowMessage = reactive(useDebouncedRef<boolean>(true))
 
 const mutation = useMutation({
   mutationFn: deleteANote,
+  cacheTime: 200,
+  networkMode: 'offlineFirst',
   onMutate: () => {
     // can do optimistic update here
   },
@@ -46,13 +48,11 @@ const mutation = useMutation({
   onSettled: () => {
     //on settled do something
   },
-  networkMode: 'offlineFirst',
-  staleTime: 8000,
 })
 
 // delete this user
 function handleDeleteUser() {
-  mutation.mutate(note.id)
+  mutation.mutate({ id: note.id })
 }
 </script>
 

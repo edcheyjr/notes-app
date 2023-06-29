@@ -3,6 +3,10 @@ const headers = new Headers({ 'Content-Type': 'application/json' })
 const Url = import.meta.env.API_URL || 'http://127.0.0.1:8000/api'
 console.log('Url', Url)
 
+type DeleteOptions = {
+  id: number
+}
+
 // get the all notes
 export async function getAllNotes(): Promise<Note[]> {
   try {
@@ -13,6 +17,7 @@ export async function getAllNotes(): Promise<Note[]> {
     if (response.status !== 200) {
       throw data.error
     }
+    console.log('data', data)
     return data
   } catch (error) {
     console.error(error)
@@ -40,7 +45,7 @@ export async function postANote(note: PostANote) {
 }
 
 //delete a note
-export async function deleteANote(id: number) {
+export async function deleteANote({ id }: DeleteOptions) {
   try {
     const response = await fetch(`${Url}/notes/${id}`, {
       method: 'DELETE',
