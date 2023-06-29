@@ -40,5 +40,6 @@ const togglePopup = (trigger: string, state?: boolean) => {
     </section>
     <footer class="w-full absolute bottom-1">&copy; mynotes.2023</footer>
   </div>
+  <!-- modal -->
   <Popup v-if="popupTriggers.buttonTrigger" :toggle="togglePopup" />
 </template>

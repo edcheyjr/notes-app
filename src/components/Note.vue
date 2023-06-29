@@ -1,37 +1,29 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, Ref, reactive } from 'vue'
 import { formatDate } from '../utils/formatDate'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import Trash from '../assets/trash.svg'
-import { Mutation, useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { deleteANote } from '../api/notes'
 import { Note, SuccessData } from '../type'
 import {
   renderSuccessMessageUI,
   renderErrorMessageUI,
 } from '../utils/messageHandlers.ts'
-
-const currentColor = ref(randomColorsGenerator())
-const queryClient = useQueryClient()
+import useDebouncedRef from '../hooks/debounce'
 
 interface Props {
   note: Note
 }
 const { note } = defineProps<Props>()
+const currentColor = ref(randomColorsGenerator())
+const queryClient = useQueryClient()
 
 const successData = ref<SuccessData>({
   success: false,
   message: '',
 })
-const isShowMessage = ref<boolean>(true)
-
-computed({
-  get: () => !isShowMessage.value,
-  set: (val) => {
-    console.log('val', val)
-    setTimeout(() => val, 2000)
-  },
-})
+const isShowMessage = reactive(useDebouncedRef<boolean>(true))
 
 const mutation = useMutation({
   mutationFn: deleteANote,
@@ -65,6 +57,7 @@ function handleDeleteUser() {
 </script>
 
 <template>
+  <span>{{ isShowMessage }}</span>
   <div class="">
     <div
       v-if="mutation.isError.value && !mutation.isSuccess.value"

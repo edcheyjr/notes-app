@@ -4,7 +4,7 @@ const Url = import.meta.env.API_URL || 'http://127.0.0.1:8000/api'
 console.log('Url', Url)
 
 // get the all notes
-export async function getAllNotes(): Promise<Note[] | undefined> {
+export async function getAllNotes(): Promise<Note[]> {
   try {
     const response = await fetch(`${Url}/notes`, {
       headers,
@@ -17,6 +17,7 @@ export async function getAllNotes(): Promise<Note[] | undefined> {
   } catch (error) {
     console.error(error)
   }
+  return []
 }
 
 // post a note
