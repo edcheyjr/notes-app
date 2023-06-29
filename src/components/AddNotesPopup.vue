@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import { useQueryClient, useMutation } from '@tanstack/vue-query'
-import { DataError, PostANote } from '../type'
+import { DataError, MessageType, PostANote } from '../type'
 import { postANote } from '../api/notes'
-import { renderErrorMessageUI } from '../utils/messageHandlers'
+import messageHandler from '../utils/messageHandlers'
+import useDebouncedRef from '../hooks/debounce'
 
 // errror messge type
 
@@ -16,6 +17,7 @@ const queryClient = useQueryClient()
 
 const color = ref(randomColorsGenerator())
 const props = defineProps<Props>()
+const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
 
 const noteInfo = ref<PostANote>({
   title: '',
@@ -50,33 +52,13 @@ const mutation = useMutation({
 
 const handleSumbitNote = (e: Event) => {
   e.preventDefault()
-  // if (!noteInfo.value.title || !noteInfo.value.content) {
-  //   return renderErrorMessageUI('Please enter a title and content', true)
-  // }
-  // if (noteInfo.value.title.length < 3) {
-  //   return renderErrorMessageUI(
-  //     'Title must be at least 3 characters long',
-  //     true
-  //   )
-  // }
-  // if (noteInfo.value.content.length < 3) {
-  //   return renderErrorMessageUI(
-  //     'Content must be at least 3 characters long',
-  //     true
-  //   )
-  // }
-  // if (noteInfo.value.title.length > 100) {
-  //   return renderErrorMessageUI(
-  //     'Title must be less than 100 characters long',
-  //     true
-  //   )
-  // }
   mutation.mutate(noteInfo.value)
   // clear inputs from  addNoteForm
   noteInfo.value = {
     title: '',
     content: '',
   }
+  isShowMessage.value = false
 
   //FIXME: the after few 2 sec go back
   // setTimeout(() => {
@@ -87,26 +69,9 @@ const handleSumbitNote = (e: Event) => {
   //   props.toggle('timedTrigger', false)
   // }, 10000)
 }
-
-// if (mutation.data.value?.error) {
-//   errorData.value = mutation.data.value.error
-// }
-
-// if (mutation.data.value?.success) {
-//   successData.value = mutation.data.value.success
-// }
 </script>
 
 <template>
-  <!-- popup -->
-  <!--     
-    @click="
-      (e:MouseEvent) => {
-        props.toggle('buttonTrigger')
-      e.stopPropagation()
-      }
-    "
-    -- -->
   <div
     class="fixed top-0 left-0 right-0 bottom-0 z-[99] bg-black/60 flex items-center justify-center"
   >
@@ -116,22 +81,21 @@ const handleSumbitNote = (e: Event) => {
         ref="addNotesForm"
         @submit.prevent="handleSumbitNote"
         @keypress.enter="handleSumbitNote"
+        class="space-y-4"
       >
         <div
           class="my-2"
           v-if="mutation.isSuccess && mutation.data.value?.success"
         >
           <div
-            class="py-1.5 text-sm font-bold text-green-400 bg-green-300/10 rounded-md px-2"
-            role="alert"
-          >
-            {{ mutation.data.value?.message }}
-          </div>
-          <!-- TOFIX: success messages -->
-          <!-- <div
-          v-html="renderSuccessMessageUI(mutation.data.value?.message)"
-        ></div> -->
-          <!-- success error messages-->
+            v-html="
+              messageHandler(
+                mutation.data.value?.message,
+                MessageType.SUCCESS,
+                isShowMessage
+              )
+            "
+          ></div>
         </div>
         <div class="space-y-2">
           <label for="title" class="font-bold italic" :style="`color:${color}`"
@@ -147,12 +111,12 @@ const handleSumbitNote = (e: Event) => {
           />
           <!-- error part -->
           <div
+            v-if="mutation.data.value?.error"
             v-for="message in mutation.data.value?.error.title"
             class="space-y-2"
           >
             <div
-              v-if="mutation.data.value?.error"
-              v-html="renderErrorMessageUI(message, true)"
+              v-html="messageHandler(message, MessageType.ERROR, isShowMessage)"
             ></div>
           </div>
         </div>
@@ -175,12 +139,12 @@ const handleSumbitNote = (e: Event) => {
           </textarea>
           <!-- error part -->
           <div
+            v-if="mutation.data.value?.error"
             v-for="message in mutation.data.value?.error.content"
             class="space-y-2"
           >
             <div
-              v-if="mutation.data.value?.error"
-              v-html="renderErrorMessageUI(message, true)"
+              v-html="messageHandler(message, MessageType.ERROR, isShowMessage)"
             ></div>
           </div>
         </div>

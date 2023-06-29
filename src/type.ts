@@ -50,3 +50,7 @@ export interface DataError extends Error {
 export interface FetchTimoutOptions extends RequestInit {
   timeout: number
 }
+export enum MessageType {
+  SUCCESS = 'success',
+  ERROR = 'error',
+}

@@ -5,11 +5,8 @@ import { randomColorsGenerator } from '../utils/randomColorsGenerator'
 import Trash from '../assets/trash.svg'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { deleteANote } from '../api/notes'
-import { Note, SuccessData } from '../type'
-import {
-  renderSuccessMessageUI,
-  renderErrorMessageUI,
-} from '../utils/messageHandlers.ts'
+import { MessageType, Note, SuccessData } from '../type'
+import messageHandler from '../utils/messageHandlers'
 import useDebouncedRef from '../hooks/debounce'
 
 interface Props {
@@ -23,14 +20,18 @@ const successData = ref<SuccessData>({
   success: false,
   message: '',
 })
-const isShowMessage = reactive(useDebouncedRef<boolean>(true))
+const isShowMessage = reactive(useDebouncedRef<boolean>(true, 2000))
 
 const mutation = useMutation({
   mutationFn: deleteANote,
   cacheTime: 200,
   networkMode: 'offlineFirst',
+  mutationKey: ['notes', note.id],
   onMutate: () => {
     // can do optimistic update here
+    successData.value.success = true
+    successData.value.message = 'Note deleted successfully'
+    isShowMessage.value = false
   },
   onSuccess: (data: SuccessData, variable, context) => {
     successData.value.success = data.success
@@ -51,7 +52,9 @@ const mutation = useMutation({
 })
 
 // delete this user
-function handleDeleteUser() {
+function handleDeleteUser(e: Event) {
+  e.preventDefault()
+  e.stopPropagation()
   mutation.mutate({ id: note.id })
 }
 </script>
@@ -61,7 +64,9 @@ function handleDeleteUser() {
   <div class="">
     <div
       v-if="mutation.isError.value && !mutation.isSuccess.value"
-      v-html="renderErrorMessageUI(mutation.error, 2000)"
+      v-html="
+        messageHandler(mutation.error.value, MessageType.ERROR, isShowMessage)
+      "
     ></div>
     <div
       v-else-if="
@@ -70,7 +75,11 @@ function handleDeleteUser() {
         mutation.data.value?.success
       "
       v-html="
-        renderSuccessMessageUI(mutation.data.value?.message, isShowMessage)
+        messageHandler(
+          mutation.data.value?.message,
+          MessageType.SUCCESS,
+          isShowMessage
+        )
       "
     ></div>
   </div>
