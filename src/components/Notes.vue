@@ -54,7 +54,7 @@ const copy = shallowReadonly(filtered)
   </div>
   <section
     :class="`w-full h-[80%] lg:h-[85%] xl:h-[89%] backdrop-blur rounded-xl overflow-x-hidden flex items-center justify-center ${
-      data && data?.length > 1 ? 'bg-gray-50/[4%]' : 'bg-transparent'
+      data && data?.length > 0 ? 'bg-gray-50/5' : 'bg-transparent'
     }`"
   >
     <div

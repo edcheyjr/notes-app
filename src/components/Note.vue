@@ -59,7 +59,7 @@ const mutation = useMutation({
 function handleDeleteUser(e: Event) {
   e.stopPropagation()
   mutation.mutate({ id: note.id })
-  console.log('id', note.id)
+  // console.log('id', note.id)
 }
 </script>
 
