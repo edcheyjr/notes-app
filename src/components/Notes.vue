@@ -30,7 +30,9 @@ const { isError, isFetched, isLoading, data, error } = useQuery(['notes'], {
 })
 
 const dataReactive = reactive(data)
+console.log('dataReactive', dataReactive)
 const filtered = computed(() =>
+  //TODO:  filtering search from backend
   dataReactive?.value?.filter((note: NoteType) =>
     note.title.includes(props.query)
   )
@@ -73,6 +75,7 @@ const copy = shallowReadonly(filtered)
           </div>
         </div>
         <div v-else class="">
+          <!-- TODO: remove the reverse here and do ordering and filtering search from backend -->
           <ul v-for="note in copy?.reverse()" class="flex flex-col">
             <li class="px-2 my-1">
               <Note
