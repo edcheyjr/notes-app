@@ -31,9 +31,9 @@ const { isError, isFetched, isLoading, data, error } = useQuery(['notes'], {
 
 const dataReactive = reactive(data)
 const filtered = computed(() =>
-  dataReactive?.value
-    ?.reverse()
-    .filter((note: NoteType) => note.title.includes(props.query))
+  dataReactive?.value?.filter((note: NoteType) =>
+    note.title.includes(props.query)
+  )
 )
 const copy = shallowReadonly(filtered)
 </script>
@@ -73,7 +73,7 @@ const copy = shallowReadonly(filtered)
           </div>
         </div>
         <div v-else class="">
-          <ul v-for="note in copy" class="flex flex-col">
+          <ul v-for="note in copy?.reverse()" class="flex flex-col">
             <li class="px-2 my-1">
               <Note
                 :note="isProxy(note) ? toRaw(note) : note"
