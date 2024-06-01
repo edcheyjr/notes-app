@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.10.0",
-    "vue": "^3.3.9"
+    "vue": "^3.4.27"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.6.2",
